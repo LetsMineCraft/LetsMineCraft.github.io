@@ -110,7 +110,13 @@
                         ${renderedBody}
                     </div>
                 `;
-                document.title = `讨论-${discussion.title}`;
+                
+                // 定义公告的真实分类 ID
+                const annId = 'DIC_kwDOV9vL3s4DMEzB';
+                // 判断当前帖子的分类，如果是公告则前缀为“公告”，否则为“讨论”
+                const prefix = (discussion.category && discussion.category.node_id === annId) ? '公告' : '讨论';
+                // 动态设置标签页标题
+                document.title = `${prefix} - ${discussion.title}`;
 
                 loadGiscus(discussionNumber);
             })
