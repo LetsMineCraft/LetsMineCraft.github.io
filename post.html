@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>讨论详情 - Let's MineCraft!</title>
+    <title>讨论 - Let's MineCraft!</title>
     <link rel="icon" type="image/png" href="/Dirt_Path.png">
     
     <!-- 👇 引入 GitHub 官方 Markdown 排版样式 (自动适配深浅色) 👇 -->
@@ -109,7 +109,7 @@
                         ${renderedBody}
                     </div>
                 `;
-                document.title = `${discussion.title} - Let's MineCraft!`;
+                document.title = `讨论-${discussion.title}`;
 
                 loadGiscus(discussionNumber);
             })
