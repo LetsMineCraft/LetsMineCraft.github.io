@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>官方公告 - Let's MineCraft!</title>
+    <link rel="icon" type="image/png" href="/Dirt_Path.png">
+    <style>
+        /* 样式与 discussions.html 完全一致，仅标题颜色改为公告橙/红色系以示区分 */
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333333; margin: 0; padding: 40px 20px; transition: background-color 0.3s, color 0.3s; }
+        nav { text-align: center; margin-bottom: 30px; }
+        nav a { margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; }
+        nav a:hover { color: #007bff; }
+        .container { max-width: 800px; margin: 0 auto; }
+
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .header-actions h1 { font-size: 24px; margin: 0; }
+        
+        .card { background: #ffffff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 24px; text-align: left; }
+        .discussion-list { display: flex; flex-direction: column; gap: 12px; }
+        .discussion-item { display: block; padding: 16px; background-color: #fff8f0; border-radius: 6px; text-decoration: none; color: inherit; border: 1px solid #ffd8a8; transition: all 0.2s ease; }
+        .discussion-item:hover { background-color: #fff3e0; border-color: #ff9800; }
+        .discussion-title { font-weight: bold; font-size: 18px; color: #e65100; margin-bottom: 8px; }
+        .discussion-meta { font-size: 13px; color: #656d76; }
+        .loading-text, .empty-text { text-align: center; color: #656d76; padding: 40px; }
+
+        @media (prefers-color-scheme: dark) {
+            body { background-color: #1e1e1e; color: #e0e0e0; }
+            nav a { color: #ccc; } nav a:hover { color: #fff; }
+            .card { background: #2d2d2d; box-shadow: 0 1px 4px rgba(255,255,255,0.05); }
+            .discussion-item { background-color: #3d2e1f; border-color: #5d4037; }
+            .discussion-item:hover { background-color: #4e3a28; border-color: #ff9800; }
+            .discussion-title { color: #ffab40; }
+            .discussion-meta { color: #a0a0a0; }
+            .loading-text, .empty-text { color: #a0a0a0; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">首页</a>
+        <a href="/discussions.html">讨论大厅</a>
+        <a href="/announcements.html">官方公告</a>
+    </nav>
+
+    <div class="container">
+        <div class="header-actions">
+            <h1>📢 官方公告</h1>
+            <!-- 公告通常由管理员在 GitHub 后台发布，故此处不放置新建按钮 -->
+        </div>
+
+        <section class="card">
+            <div id="all-announcements" class="discussion-list">
+                <p class="loading-text">正在加载公告...</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const owner = 'LetsMineCraft';
+        const repo = 'LetsMineCraft.github.io';
+        const annCategoryId = 'DIC_kwDOV9vL3s4DMEzB';
+
+        fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?category_id=${annCategoryId}&per_page=30`)
+        .then(res => res.json())
+        .then(announcements => {
+            const container = document.getElementById('all-announcements');
+            if (!announcements || announcements.length === 0) {
+                container.innerHTML = '<p class="empty-text">暂无官方公告。</p>';
+                return;
+            }
+            container.innerHTML = announcements.map(post => `
+                <a href="/post.html?number=${post.number}" class="discussion-item">
+                    <div class="discussion-title">📌 ${post.title}</div>
+                    <div class="discussion-meta">
+                        👤 ${post.user ? post.user.login : '未知'} &nbsp;|&nbsp; 
+                        📅 ${new Date(post.created_at).toLocaleDateString('zh-CN')}
+                    </div>
+                </a>
+            `).join('');
+        })
+        .catch(() => {
+            document.getElementById('all-announcements').innerHTML = '<p class="empty-text">加载失败，请刷新重试。</p>';
+        });
+    </script>
+</body>
+</html>
