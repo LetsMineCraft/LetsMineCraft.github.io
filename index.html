@@ -6,198 +6,107 @@
     <title>Let's MineCraft!</title>
     <link rel="icon" type="image/png" href="/Dirt_Path.png">
     <style>
-        /* ================= 1. 基础样式 (浅色模式) ================= */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333333;
-            margin: 0;
-            padding: 40px 20px;
-            transition: background-color 0.3s, color 0.3s;
-        }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333333; margin: 0; padding: 40px 20px; transition: background-color 0.3s, color 0.3s; }
         nav { text-align: center; margin-bottom: 30px; }
         nav a { margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; }
         nav a:hover { color: #007bff; }
-      
-        .content {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .content { text-align: center; margin-bottom: 40px; }
 
-        /* ================= 2. 讨论大厅样式 ================= */
-        .discussion-hall {
-            max-width: 800px;
-            margin: 40px auto 0;
-            padding: 24px;
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-            text-align: left;
-        }
-        .discussion-hall h2 {
-            font-size: 18px;
-            margin-top: 0;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #eeeeee;
-        }
+        /* 通用卡片样式 */
+        .card { background: #ffffff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 24px; margin-bottom: 30px; text-align: left; }
+        .card h2 { font-size: 18px; margin-top: 0; padding-bottom: 12px; border-bottom: 1px solid #eeeeee; display: flex; justify-content: space-between; align-items: center; }
+        .card h2 a { font-size: 14px; font-weight: normal; color: #007bff; text-decoration: none; }
+
+        /* 讨论列表样式 */
         .discussion-list { display: flex; flex-direction: column; gap: 12px; }
-        .discussion-item {
-            display: block;
-            padding: 12px 16px;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            text-decoration: none;
-            color: inherit;
-            border: 1px solid transparent;
-            transition: all 0.2s ease;
-        }
-        .discussion-item:hover {
-            background-color: #e9ecef;
-            border-color: #007bff;
-            transform: translateX(4px);
-        }
-        .discussion-title {
-            font-weight: bold;
-            font-size: 16px;
-            color: #24292f;
-            margin-bottom: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .discussion-meta {
-            display: flex;
-            gap: 16px;
-            font-size: 13px;
-            color: #656d76;
-        }
-        .loading-text, .empty-text, .error-text {
-            text-align: center;
-            color: #656d76;
-            padding: 20px;
-        }
-        .error-text a { color: #007bff; }
+        .discussion-item { display: block; padding: 12px 16px; background-color: #f8f9fa; border-radius: 6px; text-decoration: none; color: inherit; border: 1px solid transparent; transition: all 0.2s ease; }
+        .discussion-item:hover { background-color: #e9ecef; border-color: #007bff; transform: translateX(4px); }
+        .discussion-title { font-weight: bold; font-size: 16px; color: #24292f; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .discussion-meta { font-size: 13px; color: #656d76; }
+        .loading-text, .empty-text { text-align: center; color: #656d76; padding: 20px; }
 
-        /* ================= 3. 评论区样式 ================= */
-        .comments {
-            max-width: 800px;
-            margin: 40px auto 0;
-            padding: 24px;
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-            text-align: left;
-        }
-        .comments h2 {
-            font-size: 18px;
-            margin-top: 0;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #eeeeee;
-        }
-
-        /* ================= 4. 深色模式适配 ================= */
+        /* 深色模式 */
         @media (prefers-color-scheme: dark) {
             body { background-color: #1e1e1e; color: #e0e0e0; }
-            nav a { color: #ccc; }
-            nav a:hover { color: #fff; }
-
-            .discussion-hall, .comments {
-                background: #2d2d2d;
-                box-shadow: 0 1px 4px rgba(255,255,255,0.05);
-            }
-            .discussion-hall h2, .comments h2 { border-bottom: 1px solid #444444; }
-            
+            nav a { color: #ccc; } nav a:hover { color: #fff; }
+            .card { background: #2d2d2d; box-shadow: 0 1px 4px rgba(255,255,255,0.05); }
+            .card h2 { border-bottom: 1px solid #444444; }
+            .card h2 a { color: #58a6ff; }
             .discussion-item { background-color: #383838; }
             .discussion-item:hover { background-color: #444444; border-color: #58a6ff; }
             .discussion-title { color: #e0e0e0; }
             .discussion-meta { color: #a0a0a0; }
-            
-            .loading-text, .empty-text, .error-text { color: #a0a0a0; }
-            .error-text a { color: #58a6ff; }
+            .loading-text, .empty-text { color: #a0a0a0; }
         }
     </style>
 </head>
 <body>
     <nav>
         <a href="/">首页</a>
+        <a href="/discussions.html">讨论大厅</a>
     </nav>
 
-    <div class="content">
-        <h1>👋 你好，这里是 Let's MineCraft！</h1>
-        <p>这是官方主页，欢迎在下方留言。</p>
+    <div class="container">
+        <div class="content">
+            <h1>👋 你好，这里是 Let's MineCraft！</h1>
+            <p>这是官方主页，欢迎在下方留言或参与讨论。</p>
+        </div>
+
+        <!-- 最新讨论预览 -->
+        <section class="card">
+            <h2>
+                📢 最新讨论
+                <a href="/discussions.html">进入讨论大厅 →</a>
+            </h2>
+            <div id="latest-discussions" class="discussion-list">
+                <p class="loading-text">正在加载...</p>
+            </div>
+        </section>
+
+        <!-- 主页留言板 -->
+        <section class="card">
+            <h2>💬 主页留言板</h2>
+            <script src="https://giscus.app/client.js"
+                data-repo="LetsMineCraft/LetsMineCraft.github.io"
+                data-repo-id="R_kgDOV9vL3g"
+                data-category="Announcements"
+                data-category-id="DIC_kwDOV9vL3s4DMEzB"
+                data-mapping="pathname"
+                data-strict="0"
+                data-reactions-enabled="1"
+                data-emit-metadata="0"
+                data-input-position="bottom"
+                data-theme="preferred_color_scheme"
+                data-lang="zh-CN"
+                data-loading="lazy"
+                crossorigin="anonymous"
+                async>
+            </script>
+        </section>
     </div>
 
-    <!-- ================= 讨论大厅 ================= -->
-    <section class="discussion-hall">
-        <h2>📢 讨论大厅</h2>
-        <div id="discussion-list" class="discussion-list">
-            <p class="loading-text">正在加载最新讨论...</p>
-        </div>
-    </section>
-
-    <!-- ================= 主页评论区 ================= -->
-    <section class="comments">
-        <h2>💬 留言板</h2>
-        <script src="https://giscus.app/client.js"
-            data-repo="LetsMineCraft/LetsMineCraft.github.io"
-            data-repo-id="R_kgDOV9vL3g"
-            data-category="Announcements"
-            data-category-id="DIC_kwDOV9vL3s4DMEzB"
-            data-mapping="pathname"
-            data-strict="0"
-            data-reactions-enabled="1"
-            data-emit-metadata="0"
-            data-input-position="top"
-            data-theme="preferred_color_scheme"
-            data-lang="zh-CN"
-            data-loading="lazy"
-            crossorigin="anonymous"
-            async>
-        </script>
-    </section>
-
-    <!-- ================= 获取讨论列表的脚本 ================= -->
     <script>
         const owner = 'LetsMineCraft';
         const repo = 'LetsMineCraft.github.io';
-        const maxPosts = 5; // 大厅最多显示几个帖子
 
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' });
-        }
-
-        // 使用 GitHub REST API (无需密钥，公开仓库直接访问)
-        fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?per_page=${maxPosts}`)
-        .then(response => {
-            if (!response.ok) throw new Error('Network error');
-            return response.json();
-        })
+        fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?per_page=3`)
+        .then(res => res.json())
         .then(discussions => {
-            const listContainer = document.getElementById('discussion-list');
+            const container = document.getElementById('latest-discussions');
             if (!discussions || discussions.length === 0) {
-                listContainer.innerHTML = '<p class="empty-text">暂无讨论，快来发第一个帖子吧！</p>';
+                container.innerHTML = '<p class="empty-text">暂无讨论，快去讨论大厅发第一个帖子吧！</p>';
                 return;
             }
-
-            const html = discussions.map(post => `
+            container.innerHTML = discussions.map(post => `
                 <a href="/post.html?number=${post.number}" class="discussion-item">
                     <div class="discussion-title">${post.title}</div>
-                    <div class="discussion-meta">
-                        <span class="meta-author">👤 ${post.user ? post.user.login : '未知'}</span>
-                        <span class="meta-date">📅 ${formatDate(post.created_at)}</span>
-                        <span class="meta-comments">💬 ${post.comments} 条评论</span>
-                    </div>
+                    <div class="discussion-meta">👤 ${post.user ? post.user.login : '未知'} &nbsp;|&nbsp; 📅 ${new Date(post.created_at).toLocaleDateString('zh-CN')}</div>
                 </a>
             `).join('');
-
-            listContainer.innerHTML = html;
         })
-        .catch(error => {
-            console.error('获取讨论列表失败:', error);
-            document.getElementById('discussion-list').innerHTML = 
-                '<p class="error-text">加载失败，请<a href="https://github.com/LetsMineCraft/LetsMineCraft.github.io/discussions" target="_blank">点击此处直接访问</a>。</p>';
+        .catch(() => {
+            document.getElementById('latest-discussions').innerHTML = '<p class="empty-text">加载失败</p>';
         });
     </script>
 </body>
