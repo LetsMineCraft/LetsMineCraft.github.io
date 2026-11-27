@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>讨论详情 - Let's MineCraft!</title>
+    <link rel="icon" type="image/png" href="/Dirt_Path.png">
+    <style>
+        /* === 基础样式 === */
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333333; margin: 0; padding: 40px 20px; transition: background-color 0.3s, color 0.3s; }
+        nav { text-align: center; margin-bottom: 30px; }
+        nav a { margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; }
+        nav a:hover { color: #007bff; }
+        
+        .container { max-width: 800px; margin: 0 auto; }
+        
+        /* 帖子内容区域 */
+        .post-content {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+            text-align: left;
+        }
+        .post-title { font-size: 24px; margin-top: 0; margin-bottom: 10px; color: #24292f; }
+        .post-meta { font-size: 14px; color: #656d76; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .post-body { line-height: 1.6; font-size: 16px; }
+        .post-body img { max-width: 100%; border-radius: 4px; }
+
+        /* 评论区容器 */
+        .comments {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            text-align: left;
+        }
+        .comments h2 { font-size: 18px; margin-top: 0; padding-bottom: 12px; border-bottom: 1px solid #eee; }
+        .loading { text-align: center; padding: 40px; color: #656d76; }
+
+        /* === 深色模式适配 === */
+        @media (prefers-color-scheme: dark) {
+            body { background-color: #1e1e1e; color: #e0e0e0; }
+            nav a { color: #ccc; }
+            nav a:hover { color: #fff; }
+            .post-content, .comments { background: #2d2d2d; box-shadow: 0 1px 4px rgba(255,255,255,0.05); }
+            .post-title { color: #e0e0e0; }
+            .post-meta { color: #a0a0a0; border-bottom-color: #444; }
+            .comments h2 { border-bottom-color: #444; }
+            .loading { color: #a0a0a0; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">← 返回首页</a>
+        <a href="https://github.com/LetsMineCraft/LetsMineCraft.github.io/discussions" target="_blank">所有讨论</a>
+    </nav>
+
+    <div class="container">
+        <!-- 帖子内容加载区 -->
+        <article class="post-content" id="post-container">
+            <div class="loading">正在加载讨论内容...</div>
+        </article>
+
+        <!-- 评论区加载区 -->
+        <section class="comments">
+            <h2>💬 参与讨论</h2>
+            <div id="giscus-container" class="loading">正在初始化评论区...</div>
+        </section>
+    </div>
+
+    <script>
+        const owner = 'LetsMineCraft';
+        const repo = 'LetsMineCraft.github.io';
+
+        // 1. 从 URL 获取帖子编号 (例如: post.html?number=12)
+        const urlParams = new URLSearchParams(window.location.search);
+        const discussionNumber = urlParams.get('number');
+
+        if (!discussionNumber) {
+            document.getElementById('post-container').innerHTML = '<div class="loading">未找到指定的讨论贴，请<a href="/">返回首页</a>。</div>';
+        } else {
+            // 2. 使用 REST API 获取该帖子的详细内容 (无需密钥)
+            fetch(`https://api.github.com/repos/${owner}/${repo}/discussions/${discussionNumber}`)
+            .then(res => {
+                if (!res.ok) throw new Error('Post not found');
+                return res.json();
+            })
+            .then(discussion => {
+                const date = new Date(discussion.created_at).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+                
+                // 渲染帖子内容 (body_html 会自动解析 Markdown 格式)
+                document.getElementById('post-container').innerHTML = `
+                    <h1 class="post-title">${discussion.title}</h1>
+                    <div class="post-meta">
+                        👤 发布者: <strong>${discussion.user ? discussion.user.login : '未知'}</strong> &nbsp;|&nbsp; 
+                        📅 ${date}
+                    </div>
+                    <div class="post-body">
+                        ${discussion.body_html || discussion.body}
+                    </div>
+                `;
+                document.title = `${discussion.title} - Let's MineCraft!`;
+
+                // 3. 动态注入 Giscus 评论区，精准绑定到当前帖子
+                loadGiscus(discussionNumber);
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('post-container').innerHTML = '<div class="loading">加载失败，请检查网络或帖子是否存在。</div>';
+            });
+        }
+
+        // 动态加载 Giscus 的函数
+        function loadGiscus(termNumber) {
+            const container = document.getElementById('giscus-container');
+            container.innerHTML = ''; // 清空 loading
+
+            const script = document.createElement('script');
+            script.src = 'https://giscus.app/client.js';
+            script.setAttribute('data-repo', `${owner}/${repo}`);
+            script.setAttribute('data-repo-id', 'R_kgDOV9vL3g'); 
+            script.setAttribute('data-category', 'Announcements');
+            script.setAttribute('data-category-id', 'DIC_kwDOV9vL3s4DMEzB'); 
+            // 👇 关键：使用 number 映射，确保评论区精准绑定到当前帖子
+            script.setAttribute('data-mapping', 'number');
+            script.setAttribute('data-term', termNumber);
+            script.setAttribute('data-strict', '0');
+            script.setAttribute('data-reactions-enabled', '1');
+            script.setAttribute('data-emit-metadata', '0');
+            script.setAttribute('data-input-position', 'bottom');
+            script.setAttribute('data-theme', 'preferred_color_scheme');
+            script.setAttribute('data-lang', 'zh-CN');
+            script.setAttribute('data-loading', 'lazy');
+            script.setAttribute('crossorigin', 'anonymous');
+            script.async = true;
+
+            container.appendChild(script);
+        }
+    </script>
+</body>
+</html>
