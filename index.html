@@ -5,33 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Let's MineCraft!</title>
     <link rel="icon" type="image/png" href="/Dirt_Path.png">
-    <style>
+        <style>
+        /* ================= 1. 基础样式 (浅色模式默认) ================= */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
+            color: #333333;
             margin: 0;
             padding: 40px 20px;
+            transition: background-color 0.3s, color 0.3s;
         }
+        
         nav { text-align: center; margin-bottom: 30px; }
         nav a { margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; }
         nav a:hover { color: #007bff; }
-
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #1e1e1e; /* 深色背景 */
-                color: #e0e0e0;            /* 浅色文字 */
-            }
-            
-            /* 如果你之前加了评论区白色背景容器，深色模式下也要改 */
-            .comments {
-                background: #2d2d2d;
-                box-shadow: 0 1px 4px rgba(255,255,255,0.05);
-            }
-            
-            /* 导航栏链接颜色调整 */
-            nav a { color: #ccc; }
-            nav a:hover { color: #fff; }
-        }
       
         .content {
             max-width: 800px;
@@ -39,21 +26,44 @@
             text-align: center;
         }
 
-        /* 评论区容器：限宽 + 居中 + 留白 */
+        /* 评论区容器基础样式 */
         .comments {
             max-width: 800px;
             margin: 60px auto 0;
             padding: 24px;
-            background: #fff;
+            background: #ffffff; /* 浅色背景 */
             border-radius: 8px;
             box-shadow: 0 1px 4px rgba(0,0,0,0.08);
             text-align: left;
         }
+        
         .comments h2 {
             font-size: 18px;
             margin-top: 0;
             padding-bottom: 12px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #eeeeee; /* 浅色边框 */
+        }
+
+        /* ================= 2. 深色模式覆盖样式 ================= */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1e1e1e;
+                color: #e0e0e0;
+            }
+            
+            nav a { color: #ccc; }
+            nav a:hover { color: #fff; }
+
+            /* 深色模式下的评论区外框 */
+            .comments {
+                background: #2d2d2d; /* 覆盖为深色背景 */
+                box-shadow: 0 1px 4px rgba(255,255,255,0.05);
+            }
+            
+            /* 深色模式下的标题边框 */
+            .comments h2 {
+                border-bottom: 1px solid #444444; /* 覆盖为深色边框，否则看不清 */
+            }
         }
     </style>
 </head>
