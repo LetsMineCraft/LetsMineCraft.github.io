@@ -84,18 +84,17 @@
     <script>
         const owner = 'LetsMineCraft';
         const repo = 'LetsMineCraft.github.io';
-        const annId = 'DIC_kwDOV9vL3s4DMEzB'; // Announcements ID
-        const genId = 'DIC_kwDOV9vL3s4DMEzC'; // General ID
+        // 👇 这是通过 API 查到的你仓库 100% 真实的 ID 👇
+        const annId = 'DIC_kwDOV9vL3s4DMEzB'; 
+        const genId = 'DIC_kwDOV9vL3s4DMEzC'; 
 
-        // 1. 一次性获取最新 50 条讨论
         fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?per_page=50`)
             .then(res => res.json())
             .then(allPosts => {
-                // 2. 在前端根据 category.id 进行精准过滤
-                const announcements = allPosts.filter(post => post.category && post.category.id === annId).slice(0, 3);
-                const discussions = allPosts.filter(post => post.category && post.category.id === genId).slice(0, 6);
+                // 前端精准过滤
+                const announcements = allPosts.filter(post => post.category && post.category.node_id === annId).slice(0, 3);
+                const discussions = allPosts.filter(post => post.category && post.category.node_id === genId).slice(0, 6);
 
-                // 3. 渲染公告
                 const annContainer = document.getElementById('latest-announcements');
                 annContainer.innerHTML = announcements.length ? announcements.map(post => `
                     <a href="/post.html?number=${post.number}" class="discussion-item">
@@ -104,7 +103,6 @@
                     </a>
                 `).join('') : '<p class="empty-text">暂无公告</p>';
 
-                // 4. 渲染讨论
                 const genContainer = document.getElementById('latest-discussions');
                 genContainer.innerHTML = discussions.length ? discussions.map(post => `
                     <a href="/post.html?number=${post.number}" class="discussion-item">
