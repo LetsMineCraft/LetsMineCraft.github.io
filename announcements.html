@@ -57,14 +57,19 @@
     <script>
         const owner = 'LetsMineCraft';
         const repo = 'LetsMineCraft.github.io';
-        const annId = 'DIC_kwDOV9vL3s4DMEzB';
+        const annId = 'DIC_kwDOV9vL3s4DMEzB'; // 真实的 Announcements node_id
 
         fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?per_page=100`)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error('Network error');
+            return res.json();
+        })
         .then(allPosts => {
             const container = document.getElementById('all-announcements');
-            // 前端过滤出 Announcements 分类
-            const announcements = allPosts.filter(post => post.category && post.category.id === annId);
+            
+            // 🛡️ 防御机制 + 核心修复：使用 .node_id 进行匹配
+            if (!Array.isArray(allPosts)) throw new Error('Data format error');
+            const announcements = allPosts.filter(post => post.category && post.category.node_id === annId);
             
             if (announcements.length === 0) {
                 container.innerHTML = '<p class="empty-text">暂无官方公告。</p>';
@@ -80,8 +85,9 @@
                 </a>
             `).join('');
         })
-        .catch(() => {
-            document.getElementById('all-announcements').innerHTML = '<p class="empty-text">加载失败，请刷新重试。</p>';
+        .catch(err => {
+            console.error(err);
+            document.getElementById('all-announcements').innerHTML = '<p class="empty-text">⚠️ 加载受限，请稍后刷新重试。</p>';
         });
     </script>
 </body>
