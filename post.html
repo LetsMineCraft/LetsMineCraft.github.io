@@ -42,6 +42,21 @@
         .comments h2 { font-size: 18px; margin-top: 0; padding-bottom: 12px; border-bottom: 1px solid #eee; }
         .loading { text-align: center; padding: 40px; color: #656d76; }
 
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .nav-icon {
+            width: 18px;
+            height: 18px;
+            /* 关键：让 Minecraft 像素图放大后保持锐利的方块边缘，不被浏览器模糊化 */
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            vertical-align: middle;
+        }
+        
         /* === 深色模式适配 === */
         @media (prefers-color-scheme: dark) {
             body { background-color: #1e1e1e; color: #e0e0e0; }
@@ -52,6 +67,7 @@
             .post-meta { color: #a0a0a0; border-bottom-color: #444; }
             .comments h2 { border-bottom-color: #444; }
             .loading { color: #a0a0a0; }
+            .nav-icon { filter: brightness(1.15); }
         }
     </style>
 </head>
@@ -118,6 +134,22 @@
                 // 动态设置标签页标题
                 document.title = `${prefix} - ${discussion.title}`;
 
+                const annId = 'DIC_kwDOV9vL3s4DMEzB'; // 你的真实公告 ID
+                const isAnnouncement = discussion.category && discussion.category.node_id === annId;
+                
+                const navLinks = document.querySelectorAll('nav a');
+                navLinks.forEach(link => {
+                    const href = link.getAttribute('href');
+                    // 如果是公告详情，把图标加到“官方公告”按钮上
+                    if (isAnnouncement && href === '/announcements.html') {
+                        link.innerHTML = '<img src="/Dirt_Path.png" alt="" class="nav-icon">官方公告';
+                    } 
+                    // 如果是讨论详情，把图标加到“讨论大厅”按钮上
+                    else if (!isAnnouncement && href === '/discussions.html') {
+                        link.innerHTML = '<img src="/Dirt_Path.png" alt="" class="nav-icon">讨论大厅';
+                    }
+                });
+                
                 loadGiscus(discussionNumber);
             })
             .catch(err => {
