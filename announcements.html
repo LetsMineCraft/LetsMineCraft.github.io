@@ -6,7 +6,6 @@
     <title>官方公告 - Let's MineCraft!</title>
     <link rel="icon" type="image/png" href="/Dirt_Path.png">
     <style>
-        /* 样式与 discussions.html 完全一致，仅标题颜色改为公告橙/红色系以示区分 */
         body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333333; margin: 0; padding: 40px 20px; transition: background-color 0.3s, color 0.3s; }
         nav { text-align: center; margin-bottom: 30px; }
         nav a { margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; }
@@ -46,7 +45,6 @@
     <div class="container">
         <div class="header-actions">
             <h1>📢 官方公告</h1>
-            <!-- 公告通常由管理员在 GitHub 后台发布，故此处不放置新建按钮 -->
         </div>
 
         <section class="card">
@@ -59,13 +57,16 @@
     <script>
         const owner = 'LetsMineCraft';
         const repo = 'LetsMineCraft.github.io';
-        const annCategoryId = 'DIC_kwDOV9vL3s4DMEzB';
+        const annId = 'DIC_kwDOV9vL3s4DMEzB';
 
-        fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?category_id=${annCategoryId}&per_page=30`)
+        fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?per_page=100`)
         .then(res => res.json())
-        .then(announcements => {
+        .then(allPosts => {
             const container = document.getElementById('all-announcements');
-            if (!announcements || announcements.length === 0) {
+            // 前端过滤出 Announcements 分类
+            const announcements = allPosts.filter(post => post.category && post.category.id === annId);
+            
+            if (announcements.length === 0) {
                 container.innerHTML = '<p class="empty-text">暂无官方公告。</p>';
                 return;
             }
