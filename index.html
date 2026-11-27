@@ -46,35 +46,21 @@
     </nav>
 
     <div class="container">
-        <!-- 1. 原问候语 (不改动) -->
         <div class="content">
             <h1>👋 你好，这里是 Let's MineCraft！</h1>
             <p>这是官方主页，欢迎在下方留言或参与讨论。</p>
         </div>
 
-        <!-- 2. 公告栏 (显示最新3条 Announcements) -->
         <section class="card">
-            <h2>
-                📢 近期公告
-                <a href="/announcements.html">查看全部公告 →</a>
-            </h2>
-            <div id="latest-announcements" class="discussion-list">
-                <p class="loading-text">正在加载公告...</p>
-            </div>
+            <h2>📢 近期公告 <a href="/announcements.html">查看全部 →</a></h2>
+            <div id="latest-announcements" class="discussion-list"><p class="loading-text">正在加载...</p></div>
         </section>
 
-        <!-- 3. 讨论大厅栏 (显示最新6条 General) -->
         <section class="card">
-            <h2>
-                💬 最新讨论
-                <a href="/discussions.html">进入讨论大厅 →</a>
-            </h2>
-            <div id="latest-discussions" class="discussion-list">
-                <p class="loading-text">正在加载讨论...</p>
-            </div>
+            <h2>💬 最新讨论 <a href="/discussions.html">进入讨论大厅 →</a></h2>
+            <div id="latest-discussions" class="discussion-list"><p class="loading-text">正在加载...</p></div>
         </section>
 
-        <!-- 4. 留言栏 (不改动，使用 General 分类) -->
         <section class="card">
             <h2>📝 留言板</h2>
             <script src="https://giscus.app/client.js"
@@ -98,34 +84,39 @@
     <script>
         const owner = 'LetsMineCraft';
         const repo = 'LetsMineCraft.github.io';
-        const annCategoryId = 'DIC_kwDOV9vL3s4DMEzB'; // Announcements ID
-        const genCategoryId = 'DIC_kwDOV9vL3s4DMEzC'; // General ID
+        const annId = 'DIC_kwDOV9vL3s4DMEzB'; // Announcements ID
+        const genId = 'DIC_kwDOV9vL3s4DMEzC'; // General ID
 
-        function renderList(containerId, data) {
-            const container = document.getElementById(containerId);
-            if (!data || data.length === 0) {
-                container.innerHTML = '<p class="empty-text">暂无内容</p>';
-                return;
-            }
-            container.innerHTML = data.map(post => `
-                <a href="/post.html?number=${post.number}" class="discussion-item">
-                    <div class="discussion-title">${post.title}</div>
-                    <div class="discussion-meta">👤 ${post.user ? post.user.login : '未知'} &nbsp;|&nbsp; 📅 ${new Date(post.created_at).toLocaleDateString('zh-CN')}</div>
-                </a>
-            `).join('');
-        }
-
-        // 获取最新公告 (Announcements)
-        fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?category_id=${annCategoryId}&per_page=3`)
+        // 1. 一次性获取最新 50 条讨论
+        fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?per_page=50`)
             .then(res => res.json())
-            .then(data => renderList('latest-announcements', data))
-            .catch(() => document.getElementById('latest-announcements').innerHTML = '<p class="empty-text">加载失败</p>');
+            .then(allPosts => {
+                // 2. 在前端根据 category.id 进行精准过滤
+                const announcements = allPosts.filter(post => post.category && post.category.id === annId).slice(0, 3);
+                const discussions = allPosts.filter(post => post.category && post.category.id === genId).slice(0, 6);
 
-        // 获取最新讨论 (General)
-        fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?category_id=${genCategoryId}&per_page=6`)
-            .then(res => res.json())
-            .then(data => renderList('latest-discussions', data))
-            .catch(() => document.getElementById('latest-discussions').innerHTML = '<p class="empty-text">加载失败</p>');
+                // 3. 渲染公告
+                const annContainer = document.getElementById('latest-announcements');
+                annContainer.innerHTML = announcements.length ? announcements.map(post => `
+                    <a href="/post.html?number=${post.number}" class="discussion-item">
+                        <div class="discussion-title">📌 ${post.title}</div>
+                        <div class="discussion-meta">📅 ${new Date(post.created_at).toLocaleDateString('zh-CN')}</div>
+                    </a>
+                `).join('') : '<p class="empty-text">暂无公告</p>';
+
+                // 4. 渲染讨论
+                const genContainer = document.getElementById('latest-discussions');
+                genContainer.innerHTML = discussions.length ? discussions.map(post => `
+                    <a href="/post.html?number=${post.number}" class="discussion-item">
+                        <div class="discussion-title">${post.title}</div>
+                        <div class="discussion-meta">👤 ${post.user ? post.user.login : '未知'} &nbsp;|&nbsp; 📅 ${new Date(post.created_at).toLocaleDateString('zh-CN')}</div>
+                    </a>
+                `).join('') : '<p class="empty-text">暂无讨论</p>';
+            })
+            .catch(() => {
+                document.getElementById('latest-announcements').innerHTML = '<p class="empty-text">加载失败</p>';
+                document.getElementById('latest-discussions').innerHTML = '<p class="empty-text">加载失败</p>';
+            });
     </script>
 </body>
 </html>
