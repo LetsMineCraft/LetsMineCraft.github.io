@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>讨论大厅 - Let's MineCraft!</title>
+    <link rel="icon" type="image/png" href="/Dirt_Path.png">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333333; margin: 0; padding: 40px 20px; transition: background-color 0.3s, color 0.3s; }
+        nav { text-align: center; margin-bottom: 30px; }
+        nav a { margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; }
+        nav a:hover { color: #007bff; }
+        .container { max-width: 800px; margin: 0 auto; }
+
+        /* 新建按钮样式 */
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .header-actions h1 { font-size: 24px; margin: 0; }
+        .btn-new {
+            display: inline-block; padding: 10px 20px; background-color: #2da44e; color: #ffffff;
+            text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px;
+            transition: background-color 0.2s; box-shadow: 0 1px 0 rgba(27,31,9,0.1), inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+        .btn-new:hover { background-color: #2c974b; }
+
+        /* 列表样式 */
+        .card { background: #ffffff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 24px; text-align: left; }
+        .discussion-list { display: flex; flex-direction: column; gap: 12px; }
+        .discussion-item { display: block; padding: 16px; background-color: #f8f9fa; border-radius: 6px; text-decoration: none; color: inherit; border: 1px solid #d0d7de; transition: all 0.2s ease; }
+        .discussion-item:hover { background-color: #f3f4f6; border-color: #007bff; }
+        .discussion-title { font-weight: bold; font-size: 18px; color: #0969da; margin-bottom: 8px; }
+        .discussion-meta { font-size: 13px; color: #656d76; }
+        .loading-text, .empty-text { text-align: center; color: #656d76; padding: 40px; }
+
+        /* 深色模式 */
+        @media (prefers-color-scheme: dark) {
+            body { background-color: #1e1e1e; color: #e0e0e0; }
+            nav a { color: #ccc; } nav a:hover { color: #fff; }
+            .btn-new { background-color: #238636; } .btn-new:hover { background-color: #2ea043; }
+            .card { background: #2d2d2d; box-shadow: 0 1px 4px rgba(255,255,255,0.05); }
+            .discussion-item { background-color: #383838; border-color: #444; }
+            .discussion-item:hover { background-color: #444444; border-color: #58a6ff; }
+            .discussion-title { color: #58a6ff; }
+            .discussion-meta { color: #a0a0a0; }
+            .loading-text, .empty-text { color: #a0a0a0; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">首页</a>
+        <a href="/discussions.html">讨论大厅</a>
+    </nav>
+
+    <div class="container">
+        <div class="header-actions">
+            <h1>📢 讨论大厅</h1>
+            <!-- 👇 点击跳转到 GitHub 原生创建页面 👇 -->
+            <a href="https://github.com/LetsMineCraft/LetsMineCraft.github.io/discussions/new" target="_blank" class="btn-new">✍️ 新建讨论贴</a>
+        </div>
+
+        <section class="card">
+            <div id="all-discussions" class="discussion-list">
+                <p class="loading-text">正在加载所有讨论...</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const owner = 'LetsMineCraft';
+        const repo = 'LetsMineCraft.github.io';
+
+        // 获取前 30 条讨论
+        fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?per_page=30`)
+        .then(res => res.json())
+        .then(discussions => {
+            const container = document.getElementById('all-discussions');
+            if (!discussions || discussions.length === 0) {
+                container.innerHTML = '<p class="empty-text">还没有任何讨论，点击右上角的按钮发布第一个帖子吧！</p>';
+                return;
+            }
+            container.innerHTML = discussions.map(post => `
+                <a href="/post.html?number=${post.number}" class="discussion-item">
+                    <div class="discussion-title">${post.title}</div>
+                    <div class="discussion-meta">
+                        👤 ${post.user ? post.user.login : '未知'} &nbsp;|&nbsp; 
+                        📅 ${new Date(post.created_at).toLocaleDateString('zh-CN')} &nbsp;|&nbsp;
+                        🔄 更新于 ${new Date(post.updated_at).toLocaleDateString('zh-CN')}
+                    </div>
+                </a>
+            `).join('');
+        })
+        .catch(() => {
+            document.getElementById('all-discussions').innerHTML = '<p class="empty-text">加载失败，请刷新重试。</p>';
+        });
+    </script>
+</body>
+</html>
