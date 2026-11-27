@@ -14,11 +14,7 @@
 
         .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         .header-actions h1 { font-size: 24px; margin: 0; }
-        .btn-new {
-            display: inline-block; padding: 10px 20px; background-color: #2da44e; color: #ffffff;
-            text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px;
-            transition: background-color 0.2s; box-shadow: 0 1px 0 rgba(27,31,9,0.1), inset 0 1px 0 rgba(255,255,255,0.03);
-        }
+        .btn-new { display: inline-block; padding: 10px 20px; background-color: #2da44e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; transition: background-color 0.2s; }
         .btn-new:hover { background-color: #2c974b; }
 
         .card { background: #ffffff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 24px; text-align: left; }
@@ -52,7 +48,6 @@
     <div class="container">
         <div class="header-actions">
             <h1>💬 讨论大厅</h1>
-            <!-- 👇 强制指定分类为 General (ID: DIC_kwDOV9vL3s4DMEzC) 👇 -->
             <a href="https://github.com/LetsMineCraft/LetsMineCraft.github.io/discussions/new?category=DIC_kwDOV9vL3s4DMEzC" target="_blank" class="btn-new">✍️ 新建讨论贴</a>
         </div>
 
@@ -66,13 +61,16 @@
     <script>
         const owner = 'LetsMineCraft';
         const repo = 'LetsMineCraft.github.io';
-        const genCategoryId = 'DIC_kwDOV9vL3s4DMEzC';
+        const genId = 'DIC_kwDOV9vL3s4DMEzC';
 
-        fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?category_id=${genCategoryId}&per_page=30`)
+        fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?per_page=100`)
         .then(res => res.json())
-        .then(discussions => {
+        .then(allPosts => {
             const container = document.getElementById('all-discussions');
-            if (!discussions || discussions.length === 0) {
+            // 前端过滤出 General 分类
+            const discussions = allPosts.filter(post => post.category && post.category.id === genId);
+            
+            if (discussions.length === 0) {
                 container.innerHTML = '<p class="empty-text">还没有任何讨论，点击右上角的按钮发布第一个帖子吧！</p>';
                 return;
             }
@@ -81,8 +79,7 @@
                     <div class="discussion-title">${post.title}</div>
                     <div class="discussion-meta">
                         👤 ${post.user ? post.user.login : '未知'} &nbsp;|&nbsp; 
-                        📅 ${new Date(post.created_at).toLocaleDateString('zh-CN')} &nbsp;|&nbsp;
-                        🔄 更新于 ${new Date(post.updated_at).toLocaleDateString('zh-CN')}
+                        📅 ${new Date(post.created_at).toLocaleDateString('zh-CN')}
                     </div>
                 </a>
             `).join('');
