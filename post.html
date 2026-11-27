@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>讨论详情 - Let's MineCraft!</title>
     <link rel="icon" type="image/png" href="/Dirt_Path.png">
+    
+    <!-- 👇 引入 GitHub 官方 Markdown 排版样式 (自动适配深浅色) 👇 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown-light.css" media="(prefers-color-scheme: light)">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown-dark.css" media="(prefers-color-scheme: dark)">
+
     <style>
         /* === 基础样式 === */
         body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333333; margin: 0; padding: 40px 20px; transition: background-color 0.3s, color 0.3s; }
@@ -25,9 +30,7 @@
         }
         .post-title { font-size: 24px; margin-top: 0; margin-bottom: 10px; color: #24292f; }
         .post-meta { font-size: 14px; color: #656d76; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
-        .post-body { line-height: 1.6; font-size: 16px; }
-        .post-body img { max-width: 100%; border-radius: 4px; }
-
+        
         /* 评论区容器 */
         .comments {
             background: #ffffff;
@@ -54,7 +57,7 @@
 </head>
 <body>
     <nav>
-        <a href="/">首页</a>
+        <a href="/">← 返回首页</a>
         <a href="/discussions.html">讨论大厅</a>
     </nav>
 
@@ -71,18 +74,19 @@
         </section>
     </div>
 
+    <!-- 👇 引入 marked.js 用于解析 Markdown 👇 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <script>
         const owner = 'LetsMineCraft';
         const repo = 'LetsMineCraft.github.io';
 
-        // 1. 从 URL 获取帖子编号 (例如: post.html?number=12)
         const urlParams = new URLSearchParams(window.location.search);
         const discussionNumber = urlParams.get('number');
 
         if (!discussionNumber) {
             document.getElementById('post-container').innerHTML = '<div class="loading">未找到指定的讨论贴，请<a href="/">返回首页</a>。</div>';
         } else {
-            // 2. 使用 REST API 获取该帖子的详细内容 (无需密钥)
             fetch(`https://api.github.com/repos/${owner}/${repo}/discussions/${discussionNumber}`)
             .then(res => {
                 if (!res.ok) throw new Error('Post not found');
@@ -91,20 +95,22 @@
             .then(discussion => {
                 const date = new Date(discussion.created_at).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
                 
-                // 渲染帖子内容 (body_html 会自动解析 Markdown 格式)
+                // 👇 核心修改：使用 marked.js 将原始 Markdown 渲染为 HTML 👇
+                const renderedBody = marked.parse(discussion.body || '');
+                
+                // 👇 注意：给 post-body 加上 markdown-body 类名，以激活 GitHub 官方样式 👇
                 document.getElementById('post-container').innerHTML = `
                     <h1 class="post-title">${discussion.title}</h1>
                     <div class="post-meta">
                         👤 发布者: <strong>${discussion.user ? discussion.user.login : '未知'}</strong> &nbsp;|&nbsp; 
                         📅 ${date}
                     </div>
-                    <div class="post-body">
-                        ${discussion.body_html || discussion.body}
+                    <div class="post-body markdown-body">
+                        ${renderedBody}
                     </div>
                 `;
                 document.title = `${discussion.title} - Let's MineCraft!`;
 
-                // 3. 动态注入 Giscus 评论区，精准绑定到当前帖子
                 loadGiscus(discussionNumber);
             })
             .catch(err => {
@@ -113,10 +119,9 @@
             });
         }
 
-        // 动态加载 Giscus 的函数
         function loadGiscus(termNumber) {
             const container = document.getElementById('giscus-container');
-            container.innerHTML = ''; // 清空 loading
+            container.innerHTML = ''; 
 
             const script = document.createElement('script');
             script.src = 'https://giscus.app/client.js';
@@ -124,7 +129,6 @@
             script.setAttribute('data-repo-id', 'R_kgDOV9vL3g'); 
             script.setAttribute('data-category', 'Announcements');
             script.setAttribute('data-category-id', 'DIC_kwDOV9vL3s4DMEzB'); 
-            // 👇 关键：使用 number 映射，确保评论区精准绑定到当前帖子
             script.setAttribute('data-mapping', 'number');
             script.setAttribute('data-term', termNumber);
             script.setAttribute('data-strict', '0');
