@@ -56,6 +56,21 @@
             image-rendering: -moz-crisp-edges;
             vertical-align: middle;
         }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .nav-icon {
+            width: 18px;
+            height: 18px;
+            /* 关键：让 Minecraft 像素图放大后保持锐利的方块边缘，不被浏览器模糊化 */
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            vertical-align: middle;
+        }
         
         /* === 深色模式适配 === */
         @media (prefers-color-scheme: dark) {
