@@ -48,6 +48,7 @@
     <div class="container">
         <div class="header-actions">
             <h1>💬 讨论大厅</h1>
+            <!-- 👇 注意：这里使用小写的 slug "general"，而不是长长的 ID 👇 -->
             <a href="https://github.com/LetsMineCraft/LetsMineCraft.github.io/discussions/new?category=general" target="_blank" class="btn-new">✍️ 新建讨论贴</a>
         </div>
 
@@ -61,14 +62,19 @@
     <script>
         const owner = 'LetsMineCraft';
         const repo = 'LetsMineCraft.github.io';
-        const genId = 'DIC_kwDOV9vL3s4DMEzC';
+        const genId = 'DIC_kwDOV9vL3s4DMEzC'; // 真实的 General node_id
 
         fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?per_page=100`)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error('Network error');
+            return res.json();
+        })
         .then(allPosts => {
             const container = document.getElementById('all-discussions');
-            // 前端过滤出 General 分类
-            const discussions = allPosts.filter(post => post.category && post.category.id === genId);
+            
+            // 🛡️ 防御机制 + 核心修复：使用 .node_id 进行匹配
+            if (!Array.isArray(allPosts)) throw new Error('Data format error');
+            const discussions = allPosts.filter(post => post.category && post.category.node_id === genId);
             
             if (discussions.length === 0) {
                 container.innerHTML = '<p class="empty-text">还没有任何讨论，点击右上角的按钮发布第一个帖子吧！</p>';
@@ -84,8 +90,9 @@
                 </a>
             `).join('');
         })
-        .catch(() => {
-            document.getElementById('all-discussions').innerHTML = '<p class="empty-text">加载失败，请刷新重试。</p>';
+        .catch(err => {
+            console.error(err);
+            document.getElementById('all-discussions').innerHTML = '<p class="empty-text">⚠️ 加载受限，请稍后刷新重试。</p>';
         });
     </script>
 </body>
