@@ -42,8 +42,8 @@
 <body>
     <nav>
         <a href="/">首页</a>
-        <a href="/discussions.html">讨论大厅</a>
-        <a href="/announcements.html"><img src="/Dirt_Path.png" alt="" class="nav-icon">官方公告</a>
+        <a href="/discussions">讨论大厅</a>
+        <a href="/announcements"><img src="/Dirt_Path.png" alt="" class="nav-icon">官方公告</a>
     </nav>
 
     <div class="container">
@@ -78,7 +78,7 @@
                 return;
             }
             container.innerHTML = announcements.map(post => `
-                <a href="/post.html?number=${post.number}" class="discussion-item">
+                <a href="/post?number=${post.number}" class="discussion-item">
                     <div class="discussion-title">📌 ${post.title}</div>
                     <div class="discussion-meta">
                         👤 ${post.user ? post.user.login : '未知'} &nbsp;|&nbsp; 

@@ -89,8 +89,8 @@
 <body>
     <nav>
         <a href="/"><img src="/Dirt_Path.png" alt="" class="nav-icon">首页</a>
-        <a href="/discussions.html">讨论大厅</a>
-        <a href="/announcements.html">官方公告</a>
+        <a href="/discussions">讨论大厅</a>
+        <a href="/announcements">官方公告</a>
     </nav>
 
     <div class="container">
@@ -149,12 +149,11 @@
                 if (!Array.isArray(allPosts)) throw new Error('数据格式异常');
 
                 const announcements = allPosts.filter(post => post.category && post.category.node_id === annId).slice(0, 3);
-                // 👇 修改这里：从 6 改为 3 👇
                 const discussions = allPosts.filter(post => post.category && post.category.node_id === genId).slice(0, 3);
 
                 const annContainer = document.getElementById('latest-announcements');
                 annContainer.innerHTML = announcements.length ? announcements.map(post => `
-                    <a href="/post.html?number=${post.number}" class="discussion-item">
+                    <a href="/post?number=${post.number}" class="discussion-item">
                         <div class="discussion-title">📌 ${post.title}</div>
                         <div class="discussion-meta">📅 ${new Date(post.created_at).toLocaleDateString('zh-CN')}</div>
                     </a>
@@ -162,7 +161,7 @@
 
                 const genContainer = document.getElementById('latest-discussions');
                 genContainer.innerHTML = discussions.length ? discussions.map(post => `
-                    <a href="/post.html?number=${post.number}" class="discussion-item">
+                    <a href="/post?number=${post.number}" class="discussion-item">
                         <div class="discussion-title">${post.title}</div>
                         <div class="discussion-meta">👤 ${post.user ? post.user.login : '未知'} &nbsp;|&nbsp; 📅 ${new Date(post.created_at).toLocaleDateString('zh-CN')}</div>
                     </a>
