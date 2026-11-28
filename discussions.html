@@ -6,12 +6,14 @@
     <title>讨论大厅 - Let's MineCraft!</title>
     <link rel="icon" type="image/png" href="/Dirt_Path.png">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333333; margin: 0; padding: 40px 20px; transition: background-color 0.3s, color 0.3s; }
-        nav { text-align: center; margin-bottom: 30px; }
-        nav a { margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333333; margin: 0; padding: 80px 20px 40px; transition: background-color 0.3s, color 0.3s; }
+        
+        nav { position: fixed; top: 0; left: 0; width: 100%; background-color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 1000; text-align: center; padding: 15px 0; }
+        nav a { display: inline-flex; align-items: center; gap: 6px; margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; }
         nav a:hover { color: #007bff; }
+        .nav-icon { width: 18px; height: 18px; image-rendering: pixelated; image-rendering: -moz-crisp-edges; }
+        
         .container { max-width: 800px; margin: 0 auto; }
-
         .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         .header-actions h1 { font-size: 24px; margin: 0; }
         .btn-new { display: inline-block; padding: 10px 20px; background-color: #2da44e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; transition: background-color 0.2s; }
@@ -25,24 +27,11 @@
         .discussion-meta { font-size: 13px; color: #656d76; }
         .loading-text, .empty-text { text-align: center; color: #656d76; padding: 40px; }
 
-        .nav-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .nav-icon {
-            width: 18px;
-            height: 18px;
-            /* 关键：让 Minecraft 像素图放大后保持锐利的方块边缘，不被浏览器模糊化 */
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            vertical-align: middle;
-        }
-        
         @media (prefers-color-scheme: dark) {
             body { background-color: #1e1e1e; color: #e0e0e0; }
+            nav { background-color: #2d2d2d; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
             nav a { color: #ccc; } nav a:hover { color: #fff; }
+            .nav-icon { filter: brightness(1.15); }
             .btn-new { background-color: #238636; } .btn-new:hover { background-color: #2ea043; }
             .card { background: #2d2d2d; box-shadow: 0 1px 4px rgba(255,255,255,0.05); }
             .discussion-item { background-color: #383838; border-color: #444; }
@@ -50,24 +39,19 @@
             .discussion-title { color: #58a6ff; }
             .discussion-meta { color: #a0a0a0; }
             .loading-text, .empty-text { color: #a0a0a0; }
-            .nav-icon { filter: brightness(1.15); }
         }
     </style>
 </head>
 <body>
     <nav>
         <a href="/">首页</a>
-        <a href="/" class="nav-link">
-            <img src="/Dirt_Path.png" alt="" class="nav-icon">
-            讨论大厅
-        </a>
+        <a href="/discussions.html"><img src="/Dirt_Path.png" alt="" class="nav-icon">讨论大厅</a>
         <a href="/announcements.html">官方公告</a>
     </nav>
 
     <div class="container">
         <div class="header-actions">
             <h1>💬 讨论大厅</h1>
-            <!-- 👇 注意：这里使用小写的 slug "general"，而不是长长的 ID 👇 -->
             <a href="https://github.com/LetsMineCraft/LetsMineCraft.github.io/discussions/new?category=general" target="_blank" class="btn-new">✍️ 新建讨论贴</a>
         </div>
 
@@ -81,7 +65,7 @@
     <script>
         const owner = 'LetsMineCraft';
         const repo = 'LetsMineCraft.github.io';
-        const genId = 'DIC_kwDOV9vL3s4DMEzC'; // 真实的 General node_id
+        const genId = 'DIC_kwDOV9vL3s4DMEzC';
 
         fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?per_page=100`)
         .then(res => {
@@ -90,8 +74,6 @@
         })
         .then(allPosts => {
             const container = document.getElementById('all-discussions');
-            
-            // 🛡️ 防御机制 + 核心修复：使用 .node_id 进行匹配
             if (!Array.isArray(allPosts)) throw new Error('Data format error');
             const discussions = allPosts.filter(post => post.category && post.category.node_id === genId);
             

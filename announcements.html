@@ -6,12 +6,14 @@
     <title>官方公告 - Let's MineCraft!</title>
     <link rel="icon" type="image/png" href="/Dirt_Path.png">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333333; margin: 0; padding: 40px 20px; transition: background-color 0.3s, color 0.3s; }
-        nav { text-align: center; margin-bottom: 30px; }
-        nav a { margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333333; margin: 0; padding: 80px 20px 40px; transition: background-color 0.3s, color 0.3s; }
+        
+        nav { position: fixed; top: 0; left: 0; width: 100%; background-color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 1000; text-align: center; padding: 15px 0; }
+        nav a { display: inline-flex; align-items: center; gap: 6px; margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; }
         nav a:hover { color: #007bff; }
+        .nav-icon { width: 18px; height: 18px; image-rendering: pixelated; image-rendering: -moz-crisp-edges; }
+        
         .container { max-width: 800px; margin: 0 auto; }
-
         .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         .header-actions h1 { font-size: 24px; margin: 0; }
         
@@ -23,31 +25,17 @@
         .discussion-meta { font-size: 13px; color: #656d76; }
         .loading-text, .empty-text { text-align: center; color: #656d76; padding: 40px; }
 
-        .nav-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .nav-icon {
-            width: 18px;
-            height: 18px;
-            /* 关键：让 Minecraft 像素图放大后保持锐利的方块边缘，不被浏览器模糊化 */
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            vertical-align: middle;
-        }
-        
         @media (prefers-color-scheme: dark) {
             body { background-color: #1e1e1e; color: #e0e0e0; }
+            nav { background-color: #2d2d2d; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
             nav a { color: #ccc; } nav a:hover { color: #fff; }
+            .nav-icon { filter: brightness(1.15); }
             .card { background: #2d2d2d; box-shadow: 0 1px 4px rgba(255,255,255,0.05); }
             .discussion-item { background-color: #3d2e1f; border-color: #5d4037; }
             .discussion-item:hover { background-color: #4e3a28; border-color: #ff9800; }
             .discussion-title { color: #ffab40; }
             .discussion-meta { color: #a0a0a0; }
             .loading-text, .empty-text { color: #a0a0a0; }
-            .nav-icon { filter: brightness(1.15); }
         }
     </style>
 </head>
@@ -55,10 +43,7 @@
     <nav>
         <a href="/">首页</a>
         <a href="/discussions.html">讨论大厅</a>
-        <a href="/" class="nav-link">
-            <img src="/Dirt_Path.png" alt="" class="nav-icon">
-            官方公告
-        </a>
+        <a href="/announcements.html"><img src="/Dirt_Path.png" alt="" class="nav-icon">官方公告</a>
     </nav>
 
     <div class="container">
@@ -76,7 +61,7 @@
     <script>
         const owner = 'LetsMineCraft';
         const repo = 'LetsMineCraft.github.io';
-        const annId = 'DIC_kwDOV9vL3s4DMEzB'; // 真实的 Announcements node_id
+        const annId = 'DIC_kwDOV9vL3s4DMEzB';
 
         fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?per_page=100`)
         .then(res => {
@@ -85,8 +70,6 @@
         })
         .then(allPosts => {
             const container = document.getElementById('all-announcements');
-            
-            // 🛡️ 防御机制 + 核心修复：使用 .node_id 进行匹配
             if (!Array.isArray(allPosts)) throw new Error('Data format error');
             const announcements = allPosts.filter(post => post.category && post.category.node_id === annId);
             

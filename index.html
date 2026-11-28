@@ -6,14 +6,53 @@
     <title>Let's MineCraft!</title>
     <link rel="icon" type="image/png" href="/Dirt_Path.png">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333333; margin: 0; padding: 40px 20px; transition: background-color 0.3s, color 0.3s; }
-        nav { text-align: center; margin-bottom: 30px; }
-        nav a { margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; }
+        /* ================= 全局与导航栏样式 ================= */
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #f4f4f9; 
+            color: #333333; 
+            margin: 0; 
+            padding: 80px 20px 40px; /* 顶部留出 80px 给固定导航栏 */
+            transition: background-color 0.3s, color 0.3s; 
+        }
+        
+        /* 悬浮导航栏 */
+        nav { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            background-color: #ffffff; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            z-index: 1000; 
+            text-align: center; 
+            padding: 15px 0; 
+        }
+        
+        nav a { 
+            display: inline-flex; align-items: center; gap: 6px;
+            margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; 
+        }
         nav a:hover { color: #007bff; }
-        .container { max-width: 800px; margin: 0 auto; }
+        .nav-icon { width: 18px; height: 18px; image-rendering: pixelated; image-rendering: -moz-crisp-edges; }
+        
+        .container { max-width: 1000px; margin: 0 auto; } /* 加宽容器以容纳并排布局 */
         .content { text-align: center; margin-bottom: 40px; }
 
-        .card { background: #ffffff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 24px; margin-bottom: 30px; text-align: left; }
+        /* 主页大图标 */
+        .hero-icon { width: 150px; height: 150px; image-rendering: pixelated; margin-bottom: 16px; display: block; margin: 0 auto 16px; }
+
+        /* ================= 并排布局样式 ================= */
+        .row-layout {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card { 
+            background: #ffffff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); 
+            padding: 24px; text-align: left; flex: 1; /* 让卡片平分宽度 */
+        }
         .card h2 { font-size: 18px; margin-top: 0; padding-bottom: 12px; border-bottom: 1px solid #eeeeee; display: flex; justify-content: space-between; align-items: center; }
         .card h2 a { font-size: 14px; font-weight: normal; color: #007bff; text-decoration: none; }
 
@@ -24,24 +63,13 @@
         .discussion-meta { font-size: 13px; color: #656d76; }
         .loading-text, .empty-text { text-align: center; color: #656d76; padding: 20px; }
 
-        .nav-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .nav-icon {
-            width: 18px;
-            height: 18px;
-            /* 关键：让 Minecraft 像素图放大后保持锐利的方块边缘，不被浏览器模糊化 */
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            vertical-align: middle;
-        }
-        
+        /* ================= 深色模式 ================= */
         @media (prefers-color-scheme: dark) {
             body { background-color: #1e1e1e; color: #e0e0e0; }
+            nav { background-color: #2d2d2d; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
             nav a { color: #ccc; } nav a:hover { color: #fff; }
+            .nav-icon, .hero-icon { filter: brightness(1.15); }
+            
             .card { background: #2d2d2d; box-shadow: 0 1px 4px rgba(255,255,255,0.05); }
             .card h2 { border-bottom: 1px solid #444444; }
             .card h2 a { color: #58a6ff; }
@@ -50,37 +78,42 @@
             .discussion-title { color: #e0e0e0; }
             .discussion-meta { color: #a0a0a0; }
             .loading-text, .empty-text { color: #a0a0a0; }
-            .nav-icon { filter: brightness(1.15); }
+        }
+
+        /* 手机端适配：并排变上下 */
+        @media (max-width: 768px) {
+            .row-layout { flex-direction: column; }
         }
     </style>
 </head>
 <body>
     <nav>
-        <a href="/" class="nav-link">
-            <img src="/Dirt_Path.png" alt="" class="nav-icon">
-            首页
-        </a>
+        <a href="/"><img src="/Dirt_Path.png" alt="" class="nav-icon">首页</a>
         <a href="/discussions.html">讨论大厅</a>
         <a href="/announcements.html">官方公告</a>
     </nav>
 
     <div class="container">
         <div class="content">
+            <img src="/Dirt_Path.png" alt="Minecraft Dirt Path" class="hero-icon">
             <h1>👋 你好，这里是 Let's MineCraft！</h1>
             <p>这是官方主页，欢迎在下方留言或参与讨论。</p>
         </div>
 
-        <section class="card">
-            <h2>📢 近期公告 <a href="/announcements.html">查看全部 →</a></h2>
-            <div id="latest-announcements" class="discussion-list"><p class="loading-text">正在加载...</p></div>
-        </section>
+        <!-- 👇 并排布局容器 👇 -->
+        <div class="row-layout">
+            <section class="card">
+                <h2>📢 近期公告 <a href="/announcements.html">全部 →</a></h2>
+                <div id="latest-announcements" class="discussion-list"><p class="loading-text">正在加载...</p></div>
+            </section>
 
-        <section class="card">
-            <h2>💬 最新讨论 <a href="/discussions.html">进入讨论大厅 →</a></h2>
-            <div id="latest-discussions" class="discussion-list"><p class="loading-text">正在加载...</p></div>
-        </section>
+            <section class="card">
+                <h2>💬 最新讨论 <a href="/discussions.html">全部 →</a></h2>
+                <div id="latest-discussions" class="discussion-list"><p class="loading-text">正在加载...</p></div>
+            </section>
+        </div>
 
-        <section class="card">
+        <section class="card" style="max-width: 100%;">
             <h2>📝 留言板</h2>
             <script src="https://giscus.app/client.js"
                     data-repo="LetsMineCraft/LetsMineCraft.github.io"
@@ -88,7 +121,7 @@
                     data-category="General"
                     data-category-id="DIC_kwDOV9vL3s4DMEzC"
                     data-mapping="number" 
-                    data-term="2" 
+                    data-term="2"
                     data-strict="0"
                     data-reactions-enabled="1"
                     data-emit-metadata="0"
@@ -104,16 +137,20 @@
     <script>
         const owner = 'LetsMineCraft';
         const repo = 'LetsMineCraft.github.io';
-        // 👇 这是通过 API 查到的你仓库 100% 真实的 ID 👇
         const annId = 'DIC_kwDOV9vL3s4DMEzB'; 
         const genId = 'DIC_kwDOV9vL3s4DMEzC'; 
 
         fetch(`https://api.github.com/repos/${owner}/${repo}/discussions?per_page=50`)
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP 错误: ${res.status}`);
+                return res.json();
+            })
             .then(allPosts => {
-                // 前端精准过滤
+                if (!Array.isArray(allPosts)) throw new Error('数据格式异常');
+
                 const announcements = allPosts.filter(post => post.category && post.category.node_id === annId).slice(0, 3);
-                const discussions = allPosts.filter(post => post.category && post.category.node_id === genId).slice(0, 6);
+                // 👇 修改这里：从 6 改为 3 👇
+                const discussions = allPosts.filter(post => post.category && post.category.node_id === genId).slice(0, 3);
 
                 const annContainer = document.getElementById('latest-announcements');
                 annContainer.innerHTML = announcements.length ? announcements.map(post => `
@@ -131,9 +168,10 @@
                     </a>
                 `).join('') : '<p class="empty-text">暂无讨论</p>';
             })
-            .catch(() => {
-                document.getElementById('latest-announcements').innerHTML = '<p class="empty-text">加载失败</p>';
-                document.getElementById('latest-discussions').innerHTML = '<p class="empty-text">加载失败</p>';
+            .catch(err => {
+                console.error('加载失败:', err);
+                document.getElementById('latest-announcements').innerHTML = '<p class="empty-text">⚠️ 加载受限</p>';
+                document.getElementById('latest-discussions').innerHTML = '<p class="empty-text">⚠️ 加载受限</p>';
             });
     </script>
 </body>

@@ -3,115 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>讨论 - Let's MineCraft!</title>
+    <title>详情 - Let's MineCraft!</title>
     <link rel="icon" type="image/png" href="/Dirt_Path.png">
-    
-    <!-- 👇 引入 GitHub 官方 Markdown 排版样式 (自动适配深浅色) 👇 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown-light.css" media="(prefers-color-scheme: light)">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown-dark.css" media="(prefers-color-scheme: dark)">
 
     <style>
-        /* === 基础样式 === */
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333333; margin: 0; padding: 40px 20px; transition: background-color 0.3s, color 0.3s; }
-        nav { text-align: center; margin-bottom: 30px; }
-        nav a { margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333333; margin: 0; padding: 80px 20px 40px; transition: background-color 0.3s, color 0.3s; }
+        
+        nav { position: fixed; top: 0; left: 0; width: 100%; background-color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 1000; text-align: center; padding: 15px 0; }
+        nav a { display: inline-flex; align-items: center; gap: 6px; margin: 0 15px; text-decoration: none; color: #333; font-weight: bold; }
         nav a:hover { color: #007bff; }
+        .nav-icon { width: 18px; height: 18px; image-rendering: pixelated; image-rendering: -moz-crisp-edges; }
         
         .container { max-width: 800px; margin: 0 auto; }
-        
-        /* 帖子内容区域 */
-        .post-content {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-            margin-bottom: 40px;
-            text-align: left;
-        }
+        .post-content { background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 40px; text-align: left; }
         .post-title { font-size: 24px; margin-top: 0; margin-bottom: 10px; color: #24292f; }
         .post-meta { font-size: 14px; color: #656d76; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
-        
-        /* 评论区容器 */
-        .comments {
-            background: #ffffff;
-            padding: 24px;
-            border-radius: 8px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-            text-align: left;
-        }
+        .comments { background: #ffffff; padding: 24px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); text-align: left; }
         .comments h2 { font-size: 18px; margin-top: 0; padding-bottom: 12px; border-bottom: 1px solid #eee; }
         .loading { text-align: center; padding: 40px; color: #656d76; }
 
-        .nav-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .nav-icon {
-            width: 18px;
-            height: 18px;
-            /* 关键：让 Minecraft 像素图放大后保持锐利的方块边缘，不被浏览器模糊化 */
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            vertical-align: middle;
-        }
-
-        .nav-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .nav-icon {
-            width: 18px;
-            height: 18px;
-            /* 关键：让 Minecraft 像素图放大后保持锐利的方块边缘，不被浏览器模糊化 */
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            vertical-align: middle;
-        }
-        
-        /* === 深色模式适配 === */
         @media (prefers-color-scheme: dark) {
             body { background-color: #1e1e1e; color: #e0e0e0; }
-            nav a { color: #ccc; }
-            nav a:hover { color: #fff; }
+            nav { background-color: #2d2d2d; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+            nav a { color: #ccc; } nav a:hover { color: #fff; }
+            .nav-icon { filter: brightness(1.15); }
             .post-content, .comments { background: #2d2d2d; box-shadow: 0 1px 4px rgba(255,255,255,0.05); }
             .post-title { color: #e0e0e0; }
             .post-meta { color: #a0a0a0; border-bottom-color: #444; }
             .comments h2 { border-bottom-color: #444; }
             .loading { color: #a0a0a0; }
-            .nav-icon { filter: brightness(1.15); }
         }
     </style>
 </head>
 <body>
     <nav>
-        <a href="/">← 返回首页</a>
+        <a href="/">首页</a>
         <a href="/discussions.html">讨论大厅</a>
         <a href="/announcements.html">官方公告</a>
     </nav>
 
     <div class="container">
-        <!-- 帖子内容加载区 -->
         <article class="post-content" id="post-container">
             <div class="loading">正在加载讨论内容...</div>
         </article>
 
-        <!-- 评论区加载区 -->
         <section class="comments">
             <h2>💬 参与讨论</h2>
             <div id="giscus-container" class="loading">正在初始化评论区...</div>
         </section>
     </div>
 
-    <!-- 👇 引入 marked.js 用于解析 Markdown 👇 -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
     <script>
         const owner = 'LetsMineCraft';
         const repo = 'LetsMineCraft.github.io';
+        const annId = 'DIC_kwDOV9vL3s4DMEzB'; 
 
         const urlParams = new URLSearchParams(window.location.search);
         const discussionNumber = urlParams.get('number');
@@ -126,48 +74,35 @@
             })
             .then(discussion => {
                 const date = new Date(discussion.created_at).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
-                
-                // 👇 核心修改：使用 marked.js 将原始 Markdown 渲染为 HTML 👇
                 const renderedBody = marked.parse(discussion.body || '');
                 
-                // 👇 注意：给 post-body 加上 markdown-body 类名，以激活 GitHub 官方样式 👇
                 document.getElementById('post-container').innerHTML = `
                     <h1 class="post-title">${discussion.title}</h1>
                     <div class="post-meta">
                         👤 发布者: <strong>${discussion.user ? discussion.user.login : '未知'}</strong> &nbsp;|&nbsp; 
                         📅 ${date}
                     </div>
-                    <div class="post-body markdown-body">
-                        ${renderedBody}
-                    </div>
+                    <div class="post-body markdown-body">${renderedBody}</div>
                 `;
-                
-                // 定义公告的真实分类 ID
-                const annId = 'DIC_kwDOV9vL3s4DMEzB';
-                // 判断当前帖子的分类，如果是公告则前缀为“公告”，否则为“讨论”
-                const prefix = (discussion.category && discussion.category.node_id === annId) ? '公告' : '讨论';
-                // 动态设置标签页标题
-                document.title = `${prefix} - ${discussion.title}`;
 
                 const isAnnouncement = discussion.category && discussion.category.node_id === annId;
-                
+                const prefix = isAnnouncement ? '公告' : '讨论';
+                document.title = `${prefix} - ${discussion.title}`;
+
                 const navLinks = document.querySelectorAll('nav a');
                 navLinks.forEach(link => {
                     const href = link.getAttribute('href');
-                    // 如果是公告详情，把图标加到“官方公告”按钮上
                     if (isAnnouncement && href === '/announcements.html') {
                         link.innerHTML = '<img src="/Dirt_Path.png" alt="" class="nav-icon">官方公告';
-                    } 
-                    // 如果是讨论详情，把图标加到“讨论大厅”按钮上
-                    else if (!isAnnouncement && href === '/discussions.html') {
+                    } else if (!isAnnouncement && href === '/discussions.html') {
                         link.innerHTML = '<img src="/Dirt_Path.png" alt="" class="nav-icon">讨论大厅';
                     }
                 });
-                
+
                 loadGiscus(discussionNumber);
             })
             .catch(err => {
-                console.error(err);
+                console.error('加载失败:', err);
                 document.getElementById('post-container').innerHTML = '<div class="loading">加载失败，请检查网络或帖子是否存在。</div>';
             });
         }
@@ -175,13 +110,12 @@
         function loadGiscus(termNumber) {
             const container = document.getElementById('giscus-container');
             container.innerHTML = ''; 
-
             const script = document.createElement('script');
             script.src = 'https://giscus.app/client.js';
             script.setAttribute('data-repo', `${owner}/${repo}`);
             script.setAttribute('data-repo-id', 'R_kgDOV9vL3g'); 
-            script.setAttribute('data-category', 'Announcements');
-            script.setAttribute('data-category-id', 'DIC_kwDOV9vL3s4DMEzB'); 
+            script.setAttribute('data-category', 'General');
+            script.setAttribute('data-category-id', 'DIC_kwDOV9vL3s4DMEzC'); 
             script.setAttribute('data-mapping', 'number');
             script.setAttribute('data-term', termNumber);
             script.setAttribute('data-strict', '0');
@@ -193,7 +127,6 @@
             script.setAttribute('data-loading', 'lazy');
             script.setAttribute('crossorigin', 'anonymous');
             script.async = true;
-
             container.appendChild(script);
         }
     </script>
